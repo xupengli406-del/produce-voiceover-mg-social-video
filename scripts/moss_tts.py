@@ -19,15 +19,29 @@ class MossError(RuntimeError):
     pass
 
 
+def configured_value(name: str) -> str:
+    value = os.environ.get(name, "").strip()
+    if value or os.name != "nt":
+        return value
+    try:
+        import winreg
+
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, "Environment") as key:
+            stored, _ = winreg.QueryValueEx(key, name)
+        return str(stored).strip()
+    except (FileNotFoundError, OSError):
+        return ""
+
+
 def required_api_key() -> str:
-    value = os.environ.get("MOSS_API_KEY", "").strip()
+    value = configured_value("MOSS_API_KEY")
     if not value:
         raise MossError("MOSS_API_KEY is not configured")
     return value
 
 
 def base_url() -> str:
-    return os.environ.get("MOSS_API_BASE_URL", DEFAULT_BASE_URL).rstrip("/")
+    return (configured_value("MOSS_API_BASE_URL") or DEFAULT_BASE_URL).rstrip("/")
 
 
 def request(path: str, *, method: str = "GET", payload: dict | None = None) -> tuple[bytes, str]:
@@ -48,10 +62,13 @@ def request(path: str, *, method: str = "GET", payload: dict | None = None) -> t
 
 
 def list_voices() -> list[dict]:
-    offset = 0
+    after: str | None = None
     voices: list[dict] = []
     while True:
-        query = urllib.parse.urlencode({"limit": 150, "offset": offset, "status": "ready"})
+        params: dict[str, str | int] = {"limit": 150}
+        if after:
+            params["after"] = after
+        query = urllib.parse.urlencode(params)
         raw, content_type = request(f"/v1/audio/voices?{query}")
         if "json" not in content_type.lower():
             raise MossError("voice list did not return JSON")
@@ -60,15 +77,17 @@ def list_voices() -> list[dict]:
         voices.extend(page)
         if not result.get("has_more") or not page:
             break
-        offset += len(page)
+        after = str(result.get("next_cursor") or "").strip()
+        if not after:
+            raise MossError("voice list indicates more results but has no next_cursor")
     return voices
 
 
 def resolve_voice_id(explicit_id: str | None, voice_name: str | None) -> str:
-    voice_id = (explicit_id or os.environ.get("MOSS_VOICE_ID") or "").strip()
+    voice_id = (explicit_id or configured_value("MOSS_VOICE_ID")).strip()
     if voice_id:
         return voice_id
-    name = (voice_name or os.environ.get("MOSS_VOICE_NAME") or "").strip()
+    name = (voice_name or configured_value("MOSS_VOICE_NAME")).strip()
     if not name:
         raise MossError("configure MOSS_VOICE_ID or MOSS_VOICE_NAME")
     matches = [v for v in list_voices() if str(v.get("name", "")).casefold() == name.casefold()]

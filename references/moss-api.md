@@ -4,7 +4,7 @@
 
 ## 默认链路
 
-1. 从环境变量 `MOSS_API_KEY` 读取密钥；不得把密钥写入命令参数、Skill、项目、日志或聊天。
+1. 从环境变量 `MOSS_API_KEY` 读取密钥；不得把密钥写入命令参数、Skill、项目、日志或聊天。在 Windows 上若当前 Codex 进程尚未继承新写入的用户级环境变量，配套脚本会只读查询当前用户的环境配置作为兼容路径。
 2. 音色优先取 `MOSS_VOICE_ID`。没有 ID 时，用 `MOSS_VOICE_NAME` 或 `--voice-name` 调用 `GET /v1/audio/voices`，只在名称唯一匹配时继续。
 3. 使用 `POST https://api.mosi.cn/v1/audio/speech`，请求体至少包含：
    - `model: moss-tts`
