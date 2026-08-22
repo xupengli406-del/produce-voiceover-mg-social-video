@@ -1,0 +1,32 @@
+{
+  "title": "{{TITLE}}",
+  "mode": "{{MODE}}",
+  "durationSeconds": {{DURATION}},
+  "fps": 30,
+  "canvas": {"width": 1080, "height": 1920},
+  "subtitleSafeArea": {"top": 1540, "bottom": 1780},
+  "scenes": [
+    {
+      "id": 1,
+      "name": "钩子",
+      "start": 0,
+      "end": 6,
+      "voiceCueIndexes": [],
+      "spokenQuestion": "",
+      "spokenClaim": "",
+      "visualClaim": "",
+      "keyOnScreenText": [],
+      "coverageStatus": "pending",
+      "events": [
+        {"time": 0.2, "type": "title-reveal", "target": "headline"}
+      ]
+    }
+  ],
+  "audio": {
+    "raw": "",
+    "compact": "",
+    "subtitle": "",
+    "integratedLufsTarget": -16,
+    "truePeakDbtpMax": -1.5
+  }
+}

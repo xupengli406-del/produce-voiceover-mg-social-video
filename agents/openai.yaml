@@ -1,0 +1,7 @@
+interface:
+  display_name: "原声 MG 社媒视频"
+  short_description: "把信息、概念或演示制成带原声与MG动效的双平台发布包"
+  brand_color: "#2167F5"
+  default_prompt: "Use $produce-voiceover-mg-social-video to turn this topic and my voice into a publish-ready Xiaohongshu and Douyin MG video package."
+policy:
+  allow_implicit_invocation: true
