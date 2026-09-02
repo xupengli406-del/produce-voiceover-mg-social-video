@@ -40,7 +40,7 @@ description: 把一个信息、概念、观点或产品流程制作成带用户�
 4. 取得原声并建立唯一主时钟：优先使用用户提供的原始音频；若已配置用户授权音色 API，则直接按口播定稿生成、下载并保留 API 原始输出。必须先锁定最终旁白，再按真实发声位置反标口播；不得在音频生成前按字符数量、句子长度、图片数量或预设页长估算时码。字幕、场景、截图、MG 事件和音效必须共用同一份最终音频时间轴。详细规则见 [references/audio-and-timing.md](references/audio-and-timing.md) 与 [references/semantic-timeline-and-sync.md](references/semantic-timeline-and-sync.md)。
 5. 把最终旁白拆成“完整语义窗”，再在窗内标记“短语/关键词发声锚点”。语义窗负责一个完整问题、动作或判断；锚点负责触发拖入、点击、字段组合、状态改变、结果出现和截图聚焦。不能只给一大段口播一个起止时间后在段内平均轮播画面。60–120 秒内容通常使用 6–9 个主场景；长视频、多案例或多子流程按实际语义窗数量组织，不得为了套模板压缩步骤或机械平均时长。
 6. 为每个语义窗建立可验收的声画合同：`viewerNeed`、`spokenClaim`、`objects`、`action`、`startState`、`endState`、`resultEvidence`、`anchors`、`holdUntil` 与 `coverageStatus`。官方案例中的每个 `step` 还必须绑定最终旁白时段、对应画面、场内动作和结果状态；任一项缺失、时段不是来自真实音频、截图没有证明对象、关键动作没有发声锚点，均不得进入正式渲染。覆盖表规则见 [references/story-and-motion.md](references/story-and-motion.md)，官方案例闸门见 [references/official-case-explanation.md](references/official-case-explanation.md)。先运行 `scripts/validate_narrative_plan.py <brief.md> <timeline.json>`，再运行 `scripts/validate_av_timeline.py <timeline.json>`。
-7. 使用确定性时间驱动的 HTML/CSS/SVG/Canvas 或当前环境可用的等价方式制作 MG；优先暴露 `renderAt(t)`，按绝对时间逐帧渲染，避免依赖墙钟时间的录屏导致掉帧或音画漂移。任何删停顿、替换句子或保持音高的变速，都要通过同一编辑映射同时重算口播句、语义窗、锚点、字幕、截图和音效时间；不得手工只挪其中一层。官网截图按照“全局定位 → 操作区域 → 动作发生 → 结果验证”推进，局部放大只在当前发声锚点需要观众核对具体按钮、字段或结果时出现。详细规则见 [references/story-and-motion.md](references/story-and-motion.md) 与 [references/semantic-timeline-and-sync.md](references/semantic-timeline-and-sync.md)。
+7. 使用确定性时间驱动的 HTML/CSS/SVG/Canvas 或当前环境可用的等价方式制作 MG；优先暴露 `renderAt(t)`，按绝对时间逐帧渲染，避免依赖墙钟时间的录屏导致掉帧或音画漂移。任何删停顿、替换句子或保持音高的变速，都要通过同一编辑映射同时重算口播句、语义窗、锚点、字幕、截图和音效时间；不得手工只挪其中一层。官网截图按照“全局定位 → 操作区域 → 动作发生 → 结果验证”推进，局部放大只在当前发声锚点需要观众核对具体按钮、字段或结果时出现。两张文字型截图默认上下全宽，三张以上按发声锚点逐张接力；禁止四宫格缩略图和无证明价值的画中画。窗口间的录音空隙保持上一完成态，短于约 1.35 秒的窗用叠加承接，不能回退片尾或硬切一页。公开官网图不自动打码。详细规则见 [references/story-and-motion.md](references/story-and-motion.md) 与 [references/semantic-timeline-and-sync.md](references/semantic-timeline-and-sync.md)。
 8. 烧录同步字幕，加入稀疏的语义音效；没有音乐授权时交付无背景音乐母版并给平台内选曲建议。
 9. 分别制作封面和发布包。规格与字段见 [references/delivery-and-qa.md](references/delivery-and-qa.md)。
 10. 正式渲染前执行发布洁净检查：画面工程、字幕和封面不得带内部制作状态；可运行 `scripts/check_publish_clean.py <画面工程> <字幕文件>`。命中内部状态词时先返修，不能带病导出。
@@ -60,6 +60,7 @@ description: 把一个信息、概念、观点或产品流程制作成带用户�
 - 截图放大不是装饰。每个裁切区域必须在覆盖表中记录来源、目标区域、证明主张和出现时间；不得用固定比例裁剪不同长宽比图片，也不得截断正在证明的文字、表格字段或前后关系。
 - 内容切换时至少保留一个完整可读状态。除明确章节转场外，主证据区不得整体淡到近乎空白、闪白或黑场；交叉切换要先让新状态可识别，再移除旧状态。
 - 动效只用于：需求出现、命令/步骤被调用、状态改变、结果回写、关系建立和章节切换。
+- 每个语义窗先定义“对象从什么状态经过什么动作变成什么结果”。固定四格加文字顺序出现不算独立动效；连续三个窗不得只换文案而复用同一核心动作。
 - 最终视频与封面默认不显示右上角创作者账号名、Logo 或品牌胶囊；只有用户在当期明确要求时才恢复。系列名、期数或主题角标可以保留，但不得把创作者账号标识换个位置重新塞回画面。删除品牌元素后必须重新放大、移动或重排保留内容，不能留下空洞、占位或失衡留白。
 - 版式规整是发布底线：系列角标、标题、卡片、字幕框以及用户当期明确要求保留的 Logo 使用明确的共同网格；图标与文字既要几何居中，也要按实际渲染结果检查视觉重心。不能因为代码写了 `center` 或 `align-items:center` 就判定通过。保留的 Logo/角标须把“图标＋文字”作为一个组合整体居中，不能分别用固定坐标摆放；组合的可见像素不得被胶囊、蒙版或画布裁切，左右与上下光学留白明显不均即为发布阻断缺陷。封面和视频共用此门槛，具体修正与抽检方法见 [references/story-and-motion.md](references/story-and-motion.md) 与 [references/delivery-and-qa.md](references/delivery-and-qa.md)。
 - 字幕采用居中或左对齐都可以，但必须是明确且全片一致的选择。字幕文字、识别图标、边框和上下内边距要落在同一视觉中线；两行字幕不能出现偶然偏左、偏上或一边留白明显更大的情况。

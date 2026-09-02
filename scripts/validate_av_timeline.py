@@ -66,6 +66,7 @@ def main() -> int:
     if not windows:
         errors.append("semanticWindows is empty")
     previous_start = -1.0
+    previous_end = None
     window_ids: set[str] = set()
     for index, window in enumerate(windows, 1):
         label = f"semanticWindow {index}"
@@ -82,6 +83,13 @@ def main() -> int:
         if start < previous_start:
             errors.append(f"{label} is not ordered")
         previous_start = start
+        if previous_end is not None and start - previous_end > 0.05 and data.get("gapPolicy") not in {
+            "hold-previous", "continuous-overlap"
+        }:
+            errors.append(f"{label} starts after a visible gap but timeline has no safe gapPolicy")
+        previous_end = end
+        if end - start < 1.35 and window.get("presentationMode") != "overlay-bridge":
+            errors.append(f"{label} is shorter than 1.35s and must use overlay-bridge")
         for field in ("viewerNeed", "spokenClaim"):
             if not str(window.get(field, "")).strip():
                 errors.append(f"{label} missing: {field}")
@@ -100,6 +108,16 @@ def main() -> int:
                 errors.append(f"{label} visualContract missing: {field}")
         if window.get("coverageStatus") != "covered":
             errors.append(f"{label} coverageStatus is not covered")
+        evidence = contract.get("evidence") or []
+        if len(evidence) == 2 and any(item.get("displayMode") != "stacked" for item in evidence):
+            errors.append(f"{label} has two evidence images but is not vertically stacked")
+        if len(evidence) > 2 and any(item.get("displayMode") != "anchor-sequence" for item in evidence):
+            errors.append(f"{label} has multiple evidence images but is not anchor-sequenced")
+        for evidence_index, item in enumerate(evidence, 1):
+            if not str(item.get("narrationAnchor", "")).strip():
+                errors.append(f"{label} evidence {evidence_index} has no narrationAnchor")
+            if item.get("sourceScope") == "official-public" and item.get("privacyMask"):
+                errors.append(f"{label} evidence {evidence_index} masks a public official screenshot without a private source")
         hold_until = window.get("holdUntil")
         if not number(hold_until) or not start <= float(hold_until) <= end + 0.01:
             errors.append(f"{label} holdUntil must be inside window")
