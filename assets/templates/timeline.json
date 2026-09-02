@@ -1,10 +1,63 @@
 {
+  "schemaVersion": 2,
   "title": "{{TITLE}}",
   "mode": "{{MODE}}",
   "durationSeconds": {{DURATION}},
   "fps": 30,
   "canvas": {"width": 1080, "height": 1920},
   "subtitleSafeArea": {"top": 1540, "bottom": 1780},
+  "timingSource": {
+    "audio": "",
+    "audioSha256": "",
+    "scriptVersion": "",
+    "method": "forced-alignment",
+    "speedFactor": 1.0,
+    "editMap": ""
+  },
+  "voiceCues": [
+    {
+      "id": "voice-001",
+      "start": 0.0,
+      "end": 3.0,
+      "text": "",
+      "function": "hook"
+    }
+  ],
+  "semanticWindows": [
+    {
+      "id": "window-001",
+      "caseId": "",
+      "start": 0.0,
+      "end": 3.0,
+      "voiceCueIds": ["voice-001"],
+      "viewerNeed": "",
+      "spokenClaim": "",
+      "visualContract": {
+        "objects": [],
+        "action": "",
+        "startState": "",
+        "endState": "",
+        "resultEvidence": ""
+      },
+      "anchors": [
+        {
+          "id": "anchor-001",
+          "time": 0.2,
+          "phrase": "",
+          "event": "",
+          "target": "",
+          "resultState": "",
+          "holdUntil": 1.0
+        }
+      ],
+      "evidence": [],
+      "holdUntil": 3.0,
+      "coverageStatus": "pending"
+    }
+  ],
+  "subtitleCues": [
+    {"start": 0.0, "end": 3.0, "text": ""}
+  ],
   "scenes": [
     {
       "id": 1,
@@ -12,13 +65,23 @@
       "start": 0,
       "end": 6,
       "voiceCueIndexes": [],
+      "emotionBeat": "",
       "spokenQuestion": "",
       "spokenClaim": "",
       "visualClaim": "",
       "keyOnScreenText": [],
       "coverageStatus": "pending",
       "events": [
-        {"time": 0.2, "type": "title-reveal", "target": "headline"}
+        {"time": 0.2, "type": "title-reveal", "target": "headline"},
+        {
+          "time": 2.0,
+          "type": "screenshot-proof",
+          "target": "proof-card",
+          "source": "",
+          "region": "",
+          "proofClaim": "",
+          "zoomReason": ""
+        }
       ]
     }
   ],
