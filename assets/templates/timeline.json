@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "title": "{{TITLE}}",
   "mode": "{{MODE}}",
   "durationSeconds": {{DURATION}},
@@ -14,6 +14,31 @@
     "speedFactor": 1.0,
     "editMap": ""
   },
+  "entities": [
+    {
+      "id": "product-001",
+      "type": "product",
+      "spokenNames": [""],
+      "firstMentionAnchorId": "anchor-001",
+      "recognitionEventId": "visual-event-001",
+      "identityAssetId": "asset-product-ui"
+    }
+  ],
+  "assets": [
+    {
+      "id": "asset-product-ui",
+      "kind": "official-capture",
+      "role": "identity",
+      "sourceScope": "official-public",
+      "path": "",
+      "sourceUri": "",
+      "capturedAt": "",
+      "sha256": "",
+      "claimIds": [],
+      "synthetic": false,
+      "disclosure": "none"
+    }
+  ],
   "voiceCues": [
     {
       "id": "voice-001",
@@ -37,8 +62,28 @@
         "action": "",
         "startState": "",
         "endState": "",
-        "resultEvidence": ""
+        "resultEvidence": "",
+        "evidence": []
       },
+      "directorPlan": {
+        "attentionTarget": "",
+        "visualBeat": "",
+        "payoff": "",
+        "treatment": "mixed",
+        "treatmentReason": ""
+      },
+      "assetRefs": ["asset-product-ui"],
+      "visualEvents": [
+        {
+          "id": "visual-event-001",
+          "time": 0.2,
+          "type": "product-recognition",
+          "target": "product-ui",
+          "assetId": "asset-product-ui",
+          "narrationAnchor": "anchor-001",
+          "holdUntil": 1.2
+        }
+      ],
       "anchors": [
         {
           "id": "anchor-001",
@@ -50,7 +95,6 @@
           "holdUntil": 1.0
         }
       ],
-      "evidence": [],
       "holdUntil": 3.0,
       "coverageStatus": "pending"
     }

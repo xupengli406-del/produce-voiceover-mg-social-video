@@ -7,6 +7,8 @@
 - 信息解释、概念说明和流程演示三种叙事模式；
 - 用户原声或已授权音色 API；
 - 确定性时间驱动的 MG 画面；
+- 前三秒视觉钩子、产品首次识别与逐语义窗视觉导演；
+- 官方素材、事实证据、解释型 MG 与生成情境的来源分层；
 - 口播—画面双向覆盖审计；
 - 字幕、音效、三种封面和双平台发布包；
 - 技术、内容、视觉、音频与事实边界验收。
@@ -23,6 +25,15 @@
 python scripts/init_project.py <project-dir> --title "主题" --mode information
 ```
 
+正式制作前先完成视觉导演与素材闸门：
+
+```bash
+python scripts/validate_visual_plan.py brief.md timeline.json --stage directing
+python scripts/validate_visual_plan.py brief.md timeline.json --stage assets
+```
+
+产品类长片还必须先检查 0–8 秒样片和 0.0、0.8、1.6、2.4、3.0 秒五帧联系表，再进入整片渲染。
+
 交付校验：
 
 ```bash
@@ -31,7 +42,7 @@ python scripts/validate_delivery.py <output-dir> --topic "主题" --full-decode
 
 ## 可选 MossAPI 配置
 
-密钥与音色配置只从环境变量读取，不写入仓库：
+密钥与音色配置优先从环境变量或系统密钥管理器读取，不写入仓库；用户在当前任务中明确直发并授权时也可作为一次性运行配置直接使用：
 
 - `MOSS_API_KEY`
 - `MOSS_VOICE_ID` 或 `MOSS_VOICE_NAME`

@@ -26,8 +26,8 @@ def main() -> int:
     data = json.loads(args.timeline.read_text(encoding="utf-8-sig"))
     errors: list[str] = []
 
-    if data.get("schemaVersion") != 2:
-        errors.append("schemaVersion must be 2")
+    if data.get("schemaVersion") not in {2, 3}:
+        errors.append("schemaVersion must be 2 or 3")
     duration = data.get("durationSeconds")
     if not number(duration) or float(duration) <= 0:
         errors.append("durationSeconds must be positive")

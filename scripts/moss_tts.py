@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import subprocess
 import sys
 import tempfile
 import urllib.error
@@ -13,6 +14,11 @@ from pathlib import Path
 
 
 DEFAULT_BASE_URL = "https://api.mosi.cn"
+DEFAULT_MODEL = "moss-tts-1.5-flash"
+KEYCHAIN_SERVICES = {
+    "MOSS_API_KEY": "codex.produce-voiceover-mg-social-video.moss-api-key",
+    "MOSS_VOICE_ID": "codex.produce-voiceover-mg-social-video.moss-voice-id",
+}
 
 
 class MossError(RuntimeError):
@@ -21,8 +27,19 @@ class MossError(RuntimeError):
 
 def configured_value(name: str) -> str:
     value = os.environ.get(name, "").strip()
-    if value or os.name != "nt":
+    if value:
         return value
+    if sys.platform == "darwin" and name in KEYCHAIN_SERVICES:
+        result = subprocess.run(
+            ["security", "find-generic-password", "-a", "default", "-s", KEYCHAIN_SERVICES[name], "-w"],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        if result.returncode == 0:
+            return result.stdout.strip()
+    if os.name != "nt":
+        return ""
     try:
         import winreg
 
@@ -36,7 +53,7 @@ def configured_value(name: str) -> str:
 def required_api_key() -> str:
     value = configured_value("MOSS_API_KEY")
     if not value:
-        raise MossError("MOSS_API_KEY is not configured")
+        raise MossError("MOSS_API_KEY is not configured in the process environment or system key manager")
     return value
 
 
@@ -129,8 +146,9 @@ def synthesize(args: argparse.Namespace) -> None:
         raise MossError("input file is empty")
     voice_id = resolve_voice_id(args.voice_id, args.voice_name)
     fmt = output_format(args.output, args.format)
+    model = args.model or configured_value("MOSS_TTS_MODEL") or DEFAULT_MODEL
     payload = {
-        "model": "moss-tts",
+        "model": model,
         "input": text,
         "voice_id": voice_id,
         "response_format": fmt,
@@ -151,7 +169,7 @@ def synthesize(args: argparse.Namespace) -> None:
         "bytes": len(raw),
         "content_type": content_type,
         "voice_id": voice_id,
-        "model": "moss-tts",
+        "model": model,
         "version": args.version or "server-default",
     }, ensure_ascii=False))
 
@@ -178,6 +196,7 @@ def build_parser() -> argparse.ArgumentParser:
     speech.add_argument("--output", type=Path, required=True)
     speech.add_argument("--voice-id")
     speech.add_argument("--voice-name")
+    speech.add_argument("--model", help="Explicit Moss TTS model ID, e.g. moss-tts-1.5-flash or moss-tts-1.0-pro")
     speech.add_argument("--format", choices=("mp3", "wav"))
     speech.add_argument("--version")
     speech.set_defaults(func=synthesize)
