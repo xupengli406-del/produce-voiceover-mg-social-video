@@ -18,6 +18,9 @@ ISSUE_CLASSES = [
     "missing-late-disappearing-or-empty-shell-mg",
     "mobile-evidence-readability",
     "mechanical-pause-repeat-stumble-misread-or-voice-jump",
+    "adjacent-window-background-composition-scale-asset-or-motion-not-distinct",
+    "source-screenshot-page-number-overlay-crop-dimness-or-shadow-defect",
+    "non-evidence-window-missed-context-image-or-visual-metaphor-opportunity",
 ]
 
 
@@ -112,7 +115,7 @@ def main() -> int:
         "durationSeconds": data.get("durationSeconds"),
         "reviewerCount": reviewers,
         "windowCount": len(result),
-        "instructions": "Render every listed timestamp at full 1080x1920 and at about 360px mobile width, inspect all nine classes including annotation/content pixel overlap at enter, complete, and hold states, then replay the same interval at 1x. A repair report is not a pass until the new render is reviewed again.",
+        "instructions": "Render every listed timestamp at full 1080x1920 and at about 360px mobile width, inspect all twelve classes including annotation/content pixel overlap, adjacent-window differentiation, source screenshot defects, and missed context-image opportunities at enter, complete, and hold states, then replay the same interval at 1x. A repair report is not a pass until the new render is reviewed again.",
         "windows": result,
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
