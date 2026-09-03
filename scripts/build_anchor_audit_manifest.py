@@ -12,6 +12,7 @@ ISSUE_CLASSES = [
     "untargeted-band-mask-or-line",
     "evidence-crop-or-context-loss",
     "missing-or-wrong-callout",
+    "annotation-stroke-arrow-or-secondary-line-crosses-content-pixels",
     "icon-text-image-title-or-subtitle-collision",
     "adjacent-state-repeat-double-exposure-or-reset",
     "missing-late-disappearing-or-empty-shell-mg",
@@ -45,8 +46,15 @@ def main() -> int:
         picks = [
             {"kind": "entry", "time": round(clamp(start + 0.08, start, end), 3)},
         ]
-        for anchor in window.get("anchors") or []:
+        anchors = window.get("anchors") or []
+        for anchor_index, anchor in enumerate(anchors):
             time = float(anchor["time"])
+            next_time = float(anchors[anchor_index + 1]["time"]) if anchor_index + 1 < len(anchors) else end
+            hold_until = float(anchor.get("holdUntil") or next_time)
+            review_end = max(time + 0.05, min(hold_until, next_time, end))
+            enter_time = min(time + min(args.anchor_post, 0.12), review_end - 0.02)
+            complete_time = min(time + max(args.anchor_post, 0.34), review_end - 0.02)
+            hold_time = max(time + 0.05, review_end - 0.08)
             picks.extend([
                 {
                     "kind": "anchor-pre",
@@ -56,13 +64,29 @@ def main() -> int:
                     "time": round(clamp(time - args.anchor_pre, start, end), 3),
                 },
                 {
-                    "kind": "anchor-post",
+                    "kind": "anchor-enter",
                     "anchorId": anchor.get("id"),
                     "phrase": anchor.get("phrase"),
                     "target": anchor.get("target"),
                     "expectedState": anchor.get("resultState"),
                     "holdUntil": anchor.get("holdUntil"),
-                    "time": round(clamp(time + args.anchor_post, start, end), 3),
+                    "time": round(clamp(enter_time, start, end), 3),
+                },
+                {
+                    "kind": "anchor-complete",
+                    "anchorId": anchor.get("id"),
+                    "phrase": anchor.get("phrase"),
+                    "target": anchor.get("target"),
+                    "expectedState": anchor.get("resultState"),
+                    "time": round(clamp(complete_time, start, end), 3),
+                },
+                {
+                    "kind": "anchor-hold",
+                    "anchorId": anchor.get("id"),
+                    "phrase": anchor.get("phrase"),
+                    "target": anchor.get("target"),
+                    "expectedState": anchor.get("resultState"),
+                    "time": round(clamp(hold_time, start, end), 3),
                 },
             ])
         picks.append({"kind": "exit", "time": round(clamp(end - 0.08, start, end), 3)})
@@ -88,7 +112,7 @@ def main() -> int:
         "durationSeconds": data.get("durationSeconds"),
         "reviewerCount": reviewers,
         "windowCount": len(result),
-        "instructions": "Render every listed timestamp at full 1080x1920, inspect all eight classes, then replay the same interval at 1x. A repair report is not a pass until the new render is reviewed again.",
+        "instructions": "Render every listed timestamp at full 1080x1920 and at about 360px mobile width, inspect all nine classes including annotation/content pixel overlap at enter, complete, and hold states, then replay the same interval at 1x. A repair report is not a pass until the new render is reviewed again.",
         "windows": result,
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
