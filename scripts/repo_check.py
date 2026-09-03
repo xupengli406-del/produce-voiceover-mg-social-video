@@ -4,6 +4,7 @@ from __future__ import annotations
 import ast
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -16,7 +17,10 @@ REQUIRED = (
     "references/story-and-motion.md",
     "references/audio-and-timing.md",
     "references/delivery-and-qa.md",
+    "references/orchestration-and-state.md",
     "scripts/init_project.py",
+    "scripts/project_state.py",
+    "scripts/test_single_agent_architecture.py",
     "scripts/validate_delivery.py",
 )
 SECRET_PATTERNS = (
@@ -92,6 +96,20 @@ def main() -> int:
         for error in errors:
             print(f"ERROR: {error}")
         return 1
+    regression = subprocess.run(
+        [sys.executable, str(ROOT / "scripts" / "test_single_agent_architecture.py")],
+        cwd=ROOT,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
+    if regression.returncode != 0:
+        print(regression.stdout.rstrip())
+        print("ERROR: single-main-agent architecture regression checks failed")
+        return 1
+    print(regression.stdout.rstrip())
     print("OK: repository checks passed")
     return 0
 

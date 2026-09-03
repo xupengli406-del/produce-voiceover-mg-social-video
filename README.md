@@ -13,6 +13,12 @@
 - 字幕、音效、三种封面和双平台发布包；
 - 技术、内容、视觉、音频与事实边界验收。
 
+## 运行架构
+
+整个项目由一个主智能体连续负责。脚本、渲染、ASR、抽帧和检测程序只做确定性执行，不把案例、语义窗或终审分派给其他智能体。长片会被拆成连续检查区间，但仍由同一负责人按顺序完成，并在最后做整片 `1×` 终审。
+
+每个项目使用 `project-state.json` 保存阶段产物、哈希、批准状态和失效传播。修改口播会使旧音频及其下游失效；修改音频会使旧时码和旧渲染失效；修改成片会使旧终审结论失效。详细规则见 [references/orchestration-and-state.md](references/orchestration-and-state.md)。
+
 纯录屏剪辑不属于这个 Skill 的主要范围，应使用录屏视频专项流程。
 
 ## 安装
@@ -23,6 +29,13 @@
 
 ```bash
 python scripts/init_project.py <project-dir> --title "主题" --mode information
+```
+
+已有项目建立状态账本：
+
+```bash
+python scripts/project_state.py init <project-dir>
+python scripts/project_state.py status <project-dir>
 ```
 
 正式制作前先完成视觉导演与素材闸门：
@@ -38,6 +51,12 @@ python scripts/validate_visual_plan.py brief.md timeline.json --stage assets
 
 ```bash
 python scripts/validate_delivery.py <output-dir> --topic "主题" --full-decode
+```
+
+生成同一主智能体依次执行的逐锚点审查清单：
+
+```bash
+python scripts/build_anchor_audit_manifest.py timeline.json audit-manifest.json
 ```
 
 ## 可选 MossAPI 配置

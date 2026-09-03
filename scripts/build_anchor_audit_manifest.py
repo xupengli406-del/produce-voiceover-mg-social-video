@@ -32,16 +32,27 @@ def main() -> int:
     parser = argparse.ArgumentParser(description="Create per-window and per-anchor frame audit timestamps.")
     parser.add_argument("timeline", type=Path)
     parser.add_argument("output", type=Path)
-    parser.add_argument("--reviewers", type=int, default=1, help="Split continuous windows across 1-8 reviewers")
+    parser.add_argument("--sections", type=int, default=0, help="Split one main agent's sequential audit into 1-8 continuous sections; 0 selects automatically")
     parser.add_argument("--anchor-pre", type=float, default=0.12)
     parser.add_argument("--anchor-post", type=float, default=0.18)
     args = parser.parse_args()
 
     data = json.loads(args.timeline.read_text(encoding="utf-8-sig"))
     windows = data.get("semanticWindows") or []
-    reviewers = max(1, min(8, args.reviewers))
     if not windows:
         raise SystemExit("semanticWindows is empty")
+    if args.sections < 0 or args.sections > 8:
+        raise SystemExit("--sections must be between 0 and 8")
+    duration = float(data.get("durationSeconds") or 0.0)
+    if args.sections:
+        sections = args.sections
+    elif duration > 480 or len(windows) > 36:
+        sections = 4
+    elif duration > 240 or len(windows) > 24:
+        sections = 3
+    else:
+        sections = 1
+    sections = min(sections, len(windows))
 
     result = []
     for index, window in enumerate(windows):
@@ -103,19 +114,20 @@ def main() -> int:
             "end": end,
             "caseNumber": window.get("caseNumber"),
             "spokenClaim": window.get("spokenClaim"),
-            "reviewer": index * reviewers // len(windows) + 1,
+            "reviewSection": index * sections // len(windows) + 1,
             "framePicks": picks,
             "requiredChecks": ISSUE_CLASSES,
             "status": "pending",
         })
 
     output = {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
+        "architecture": "single-main-agent",
         "timeline": str(args.timeline.resolve()),
         "durationSeconds": data.get("durationSeconds"),
-        "reviewerCount": reviewers,
+        "reviewSectionCount": sections,
         "windowCount": len(result),
-        "instructions": "Render every listed timestamp at full 1080x1920 and at about 360px mobile width, inspect all twelve classes including annotation/content pixel overlap, adjacent-window differentiation, source screenshot defects, and missed context-image opportunities at enter, complete, and hold states, then replay the same interval at 1x. A repair report is not a pass until the new render is reviewed again.",
+        "instructions": "The same main agent reviews every continuous section in order and keeps one defect ledger. Render every listed timestamp at full 1080x1920 and at about 360px mobile width, inspect all twelve classes including annotation/content pixel overlap, adjacent-window differentiation, source screenshot defects, and missed context-image opportunities at enter, complete, and hold states, then replay the same interval at 1x. After all sections, replay the complete film at 1x. A repair report is not a pass until the new render is reviewed again.",
         "windows": result,
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)

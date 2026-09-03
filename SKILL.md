@@ -7,6 +7,12 @@ description: 把一个信息、概念、观点或产品流程制作成带用户�
 
 把用户给出的主题和原声推进到可直接发布的竖屏成片。默认同时适配小红书与抖音，保留原始素材，实际生成视频、字幕、封面与发布包，不把制作步骤留给用户。
 
+## 运行架构：一个主智能体负责到底
+
+从 Brief、事实核验、口播、音频、时间轴、视觉导演、素材、渲染、终审到交付，全部由当前主智能体连续完成。禁止把案例、语义窗、音频审核、画面审核或终验委派给子智能体，也禁止把多个独立产出拼成一条片。脚本、渲染器、ASR、图像生成、网页截图和媒体检测只作为确定性工具使用，结果必须回到同一个主智能体判断。长片可以分成连续区间逐段检查，但同一负责人必须持有完整 Brief、事实矩阵、术语表、时间轴、素材账本和缺陷账本，并在最后从头到尾 `1×` 完整播放。
+
+新项目使用 `scripts/init_project.py` 时会创建 `project-state.json`；已有项目先运行 `scripts/project_state.py init <project-dir>`。每个阶段的实际产物要先 `record`，完成对应专项验收后才能 `approve`。口播、音频、时间轴、素材或成片一旦变化，旧的下游状态自动变成 `stale`，不得继续沿用旧时码、旧渲染或旧验收结论。完整阶段、依赖、失效传播和命令见 [references/orchestration-and-state.md](references/orchestration-and-state.md)。架构简化不减少下文及各专项 reference 中的任何硬性标准。
+
 ## 先选择表达模式
 
 - **信息解释**：回答“发生了什么、为什么与我有关、结论是什么”。
@@ -45,8 +51,8 @@ description: 把一个信息、概念、观点或产品流程制作成带用户�
 9. 烧录同步字幕，加入稀疏的语义音效；没有音乐授权时交付无背景音乐母版并给平台内选曲建议。
 10. 分别制作封面和发布包。制作封面时必须组合调用 `$produce-social-media-cover`：完整读取该 Skill 的 `SKILL.md`，并按其要求读取 `references/approved-cover-system.md`，由它负责封面 Brief、真人身份锚定、无字主视觉、确定性中文排版、三比例独立构图与封面终验；本 Skill 负责提供本期主题、受众、唯一结论、事实边界、视频视觉关系和平台交付规格。不得仅摘抄几条封面风格要求后在 MG 工程内自行降级制作，也不得把视频首帧、普通信息卡、静态商务海报或竖版硬裁图当作正式封面。若 `$produce-social-media-cover` 未注册、不可读取或缺少必要的用户真人身份参考，立即停止封面生产并明确报告缺口，不得静默换成通用模板或虚构人物。封面与视频必须承诺同一件事，但视觉制作和验收分别遵守两套 Skill 的完整合同。规格与字段见 [references/delivery-and-qa.md](references/delivery-and-qa.md)。
 11. 正式渲染前执行发布洁净检查：画面工程、字幕和封面不得带内部制作状态；可运行 `scripts/check_publish_clean.py <画面工程> <字幕文件>`。命中内部状态词时先返修，不能带病导出。
-12. 先输出带绝对时间码、语义窗 ID、当前锚点、活动实体和活动素材 ID 的调试版；检查每个窗的起点、中点、终点和每次状态切换，再移除调试层输出发布版。官网证据长片还要对每个锚点前后和每个语义窗边界抽取实际成片帧，分别生成锚点联系表与边界联系表；可先运行 `scripts/build_anchor_audit_manifest.py <timeline.json> <audit-manifest.json> --reviewers 3` 分派连续区间。逐帧检查证据完整性、标注是否精确指向当前词／按钮／表格行、图文碰撞、重复、MG 真实触发和声音接缝。再对完整成片做异常快切检测；任意相邻显著变化间隔小于约 `0.55s` 的位置都必须抽取前后连续帧，排除错页闪一下、动画重置和重复卡一下。详细门槛见 [references/rendered-frame-and-audio-audit.md](references/rendered-frame-and-audio-audit.md)。以 1× 速度完整播放一次声音、字幕、动作、停顿和截图证据；未完整播放不得宣称终验通过。
-13. 完成技术、内容、视觉动效、字幕音频四类验收后再写入最终交付目录。
+12. 先输出带绝对时间码、语义窗 ID、当前锚点、活动实体和活动素材 ID 的调试版；检查每个窗的起点、中点、终点和每次状态切换，再移除调试层输出发布版。官网证据长片还要对每个锚点前后和每个语义窗边界抽取实际成片帧，分别生成锚点联系表与边界联系表；可先运行 `scripts/build_anchor_audit_manifest.py <timeline.json> <audit-manifest.json>`，由同一主智能体按清单中的连续区间依次完成全部检查。逐帧检查证据完整性、标注是否精确指向当前词／按钮／表格行、图文碰撞、重复、MG 真实触发和声音接缝。再对完整成片做异常快切检测；任意相邻显著变化间隔小于约 `0.55s` 的位置都必须抽取前后连续帧，排除错页闪一下、动画重置和重复卡一下。详细门槛见 [references/rendered-frame-and-audio-audit.md](references/rendered-frame-and-audio-audit.md)。以 1× 速度完整播放一次声音、字幕、动作、停顿和截图证据；未完整播放不得宣称终验通过。
+13. 完成技术、内容、视觉动效、字幕音频四类验收后，记录并批准 `audit`；最终目录清理和复验完成后才能批准 `delivery`。不得用旧版验收报告批准新版成片。
 
 ## 返工与样片闸门
 
@@ -120,6 +126,7 @@ description: 把一个信息、概念、观点或产品流程制作成带用户�
 ## 可复用资源
 
 - 新建项目时可运行 scripts/init_project.py <project-dir> --title "主题" --mode information|concept|demo。
+- 已有项目可运行 `python scripts/project_state.py init <project-dir>` 建立单主智能体状态账本；各阶段用 `record`、`approve` 和 `check --through <stage>` 管理版本与失效传播。
 - MossAPI 已配置时可运行 `python scripts/moss_tts.py synthesize --input-file <口播稿> --output <原始音频>`；音色从 `MOSS_VOICE_ID` 或 `MOSS_VOICE_NAME` 解析，密钥从 `MOSS_API_KEY` 读取。
 - 首次核对音色可运行 `python scripts/moss_tts.py list-voices --match <音色名称>`，确认返回的名称与 ID 后再生成完整口播。
 - 完成后运行 scripts/validate_delivery.py <output-dir> --topic "主题" 做交付结构与基础媒体检查。

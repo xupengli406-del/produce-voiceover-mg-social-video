@@ -7,6 +7,8 @@ import re
 import shutil
 from pathlib import Path
 
+from project_state import new_state, save_state
+
 
 SKILL_ROOT = Path(__file__).resolve().parents[1]
 ASSETS = SKILL_ROOT / "assets"
@@ -68,6 +70,7 @@ def main() -> None:
         "status": "initialized",
     }
     (root / "project.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    save_state(root / "project-state.json", new_state(title=title, mode=args.mode))
     print(str(root))
 
 
