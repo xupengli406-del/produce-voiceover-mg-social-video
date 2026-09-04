@@ -15,6 +15,8 @@ description: 把一个信息、概念、观点或产品流程制作成带用户�
 
 ## 先选择表达模式
 
+画面实现新增 Remotion 制作层：新工程默认初始化 `assets/remotion-template/`。制作或修改 MG 前读取 [references/remotion-production.md](references/remotion-production.md)，使用实际测字、原图坐标映射的自适应标注、避障箭头和语义锚点驱动组件；原有导演、证据、音频与逐帧终验标准全部保留。已有认可工程不自动迁移。组件诊断片只证明工程行为，正式长片仍先做同稿同音频的 30–60 秒标杆和 0–8 秒开头验收。
+
 - **信息解释**：回答“发生了什么、为什么与我有关、结论是什么”。
 - **概念说明**：让零基础观众听完后能复述概念，而不只是听过名词。简明不等于一句定义或泛泛带过；至少讲清它解决的问题、普通话定义、最小工作机制、一个贯穿案例和关键边界，避免术语堆叠。同时必须按媒体叙事组织，不能把这些要素机械写成教科书目录。完整骨架、复述测试与媒体观看测试见 [references/story-and-motion.md](references/story-and-motion.md)。
 - **流程演示**：展示输入、执行、状态变化与结果；演示数据必须标明，不能冒充真实运行证据。
@@ -47,7 +49,7 @@ description: 把一个信息、概念、观点或产品流程制作成带用户�
 5. 把最终旁白拆成“完整语义窗”，再在窗内标记“短语/关键词发声锚点”。语义窗负责一个完整问题、动作或判断；锚点负责触发拖入、点击、字段组合、状态改变、结果出现和截图聚焦。不能只给一大段口播一个起止时间后在段内平均轮播画面。60–120 秒内容通常使用 6–9 个主场景；长视频、多案例或多子流程按实际语义窗数量组织，不得为了套模板压缩步骤或机械平均时长。
 6. 为每个语义窗建立可验收的声画合同：`viewerNeed`、`spokenClaim`、`objects`、`action`、`startState`、`endState`、`resultEvidence`、`anchors`、`holdUntil` 与 `coverageStatus`。在选素材或套动效前，必须再填写 `directorPlan`：`attentionTarget`、`visualBeat`、`payoff`、`treatment`、`treatmentReason`，明确观众第一眼看什么、随哪句口播发生什么变化、窗口结束时看懂什么，以及为什么选截图、MG、生成情境或混合呈现。`directorPlan` 不能只是改写口播。官方案例中的每个 `step` 还必须绑定最终旁白时段、对应画面、场内动作和结果状态；任一项缺失、时段不是来自真实音频、截图没有证明对象、关键动作没有发声锚点，均不得进入正式渲染。覆盖表规则见 [references/story-and-motion.md](references/story-and-motion.md)，视觉导演与素材规则见 [references/visual-direction-and-assets.md](references/visual-direction-and-assets.md)，官方案例闸门见 [references/official-case-explanation.md](references/official-case-explanation.md)。依次运行 `scripts/validate_narrative_plan.py <brief.md> <timeline.json>`、`scripts/validate_av_timeline.py <timeline.json>` 与 `scripts/validate_visual_plan.py <brief.md> <timeline.json> --stage directing`。
 7. 导演闸门通过后，再倒推并取得每窗真正需要的素材：官方 Logo／官网公开原图／实机截图负责产品身份和事实证据，MG 负责对象、动作、关系和状态变化，生成图片只负责现实情境或氛围。找不到现成图时，应去官方页面截图、实机截取、绘制解释型 MG 或生成非品牌情境，不能因为模板只有卡片就让内容迁就模板。产品第一次被念到时，官方 Logo、官方产品界面或真实产品截图必须在发声前 0.20 秒至发声后 0.35 秒内变得可识别，并稳定至少 0.80 秒；通用 Agent 圆点、字幕或生成的伪 Logo／伪界面不算产品识别。素材取得后运行 `scripts/validate_visual_plan.py <brief.md> <timeline.json> --stage assets`。
-8. 使用确定性时间驱动的 HTML/CSS/SVG/Canvas 或当前环境可用的等价方式制作 MG；优先暴露 `renderAt(t)`，按绝对时间逐帧渲染，避免依赖墙钟时间的录屏导致掉帧或音画漂移。任何删停顿、替换句子或保持音高的变速，都要通过同一编辑映射同时重算口播句、语义窗、锚点、字幕、截图和音效时间；不得手工只挪其中一层。官网截图按照“全局定位 → 操作区域 → 动作发生 → 结果验证”推进，局部放大只在当前发声锚点需要观众核对具体按钮、字段或结果时出现。两张文字型截图默认上下全宽，三张以上按发声锚点逐张接力；禁止四宫格缩略图和无证明价值的画中画。窗口切换不得把两个完整页面交叉叠化成半透明脏帧；新窗第一帧必须已有可识别主对象，或保持上一完整状态直到新对象就绪。不得出现错页闪帧、空白闪帧和半成品状态。公开官网图不自动打码。详细规则见 [references/story-and-motion.md](references/story-and-motion.md)、[references/semantic-timeline-and-sync.md](references/semantic-timeline-and-sync.md) 与 [references/visual-direction-and-assets.md](references/visual-direction-and-assets.md)。
+8. 新工程默认使用 Remotion 的 React/HTML/CSS/SVG 组件和全局帧时钟；已有 Canvas 或等价确定性工程保留 `renderAt(t)` 接口，两者均按同一绝对时间逐帧渲染，避免依赖墙钟时间的录屏导致掉帧或音画漂移。任何删停顿、替换句子或保持音高的变速，都要通过同一编辑映射同时重算口播句、语义窗、锚点、字幕、截图和音效时间；不得手工只挪其中一层。官网截图按照“全局定位 → 操作区域 → 动作发生 → 结果验证”推进，局部放大只在当前发声锚点需要观众核对具体按钮、字段或结果时出现。两张文字型截图默认上下全宽，三张以上按发声锚点逐张接力；禁止四宫格缩略图和无证明价值的画中画。窗口切换不得把两个完整页面交叉叠化成半透明脏帧；新窗第一帧必须已有可识别主对象，或保持上一完整状态直到新对象就绪。不得出现错页闪帧、空白闪帧和半成品状态。公开官网图不自动打码。详细规则见 [references/story-and-motion.md](references/story-and-motion.md)、[references/semantic-timeline-and-sync.md](references/semantic-timeline-and-sync.md) 与 [references/visual-direction-and-assets.md](references/visual-direction-and-assets.md)。
 9. 烧录同步字幕，加入稀疏的语义音效；没有音乐授权时交付无背景音乐母版并给平台内选曲建议。
 10. 分别制作封面和发布包。制作封面时必须组合调用 `$produce-social-media-cover`：完整读取该 Skill 的 `SKILL.md`，并按其要求读取 `references/approved-cover-system.md`，由它负责封面 Brief、真人身份锚定、无字主视觉、确定性中文排版、三比例独立构图与封面终验；本 Skill 负责提供本期主题、受众、唯一结论、事实边界、视频视觉关系和平台交付规格。不得仅摘抄几条封面风格要求后在 MG 工程内自行降级制作，也不得把视频首帧、普通信息卡、静态商务海报或竖版硬裁图当作正式封面。若 `$produce-social-media-cover` 未注册、不可读取或缺少必要的用户真人身份参考，立即停止封面生产并明确报告缺口，不得静默换成通用模板或虚构人物。封面与视频必须承诺同一件事，但视觉制作和验收分别遵守两套 Skill 的完整合同。规格与字段见 [references/delivery-and-qa.md](references/delivery-and-qa.md)。
 11. 正式渲染前执行发布洁净检查：画面工程、字幕和封面不得带内部制作状态；可运行 `scripts/check_publish_clean.py <画面工程> <字幕文件>`。命中内部状态词时先返修，不能带病导出。
@@ -132,7 +134,8 @@ description: 把一个信息、概念、观点或产品流程制作成带用户�
 - 完成后运行 scripts/validate_delivery.py <output-dir> --topic "主题" 做交付结构与基础媒体检查。
 - 正式渲染前运行 `python scripts/check_publish_clean.py <render-source> <final-srt>`，避免把内部状态词烧进可发布画面。
 - 语音合成前运行 `python scripts/check_audience_language.py <spoken-script> <final-srt>`，拦截被误写进口播的制作说明，并人工复核脚本提示的术语。
-- assets/mg-template/ 是可复制的确定性 Canvas MG 起点。
+- assets/remotion-template/ 是默认的可测试 Remotion 画面起点；`scripts/prepare_remotion.py` 校验并编译同一时间轴，原有步骤 8 的绝对秒数通过统一帧映射实现，不额外创建第二套时间源。
+- assets/mg-template/ 仅用于显式选择 `--renderer canvas-legacy` 的已有 Canvas 兼容；不能绕过新增测量、避让和实际帧检查。
 - assets/templates/ 包含 Brief、时间轴和发布包模板。
 
 确认成品可用后，清理拆帧、联系表、候选版、临时混音和调试文件；保留最终交付、用户原始素材、事实证据与可复现的时间轴/工程文件。

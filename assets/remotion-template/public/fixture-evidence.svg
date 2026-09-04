@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="480" viewBox="0 0 920 480">
+<rect width="920" height="480" rx="20" fill="#fff"/>
+<g font-family="PingFang SC, sans-serif" fill="#172332">
+<text x="56" y="67" font-size="28" fill="#637284">文件处理记录 · 示例</text>
+<path d="M56 94H864" stroke="#d9e2ea"/>
+<text x="56" y="170" font-size="38" font-weight="600">已重命名 29 个文件</text>
+<text x="56" y="240" font-size="32">命名规则：日期＋主题＋类型</text>
+<text x="56" y="294" font-size="32">文件名没有冲突，可以继续查找。</text>
+<text x="56" y="368" font-size="34" font-weight="600">只改当前这一层，里面的文件夹没碰。</text>
+<text x="56" y="436" font-size="26" fill="#637284">示例数据，仅用于验证画面与标注。</text>
+</g></svg>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="480" viewBox="0 0 920 480">
+<rect width="920" height="480" rx="20" fill="#fff"/>
+<g font-family="PingFang SC, sans-serif" fill="#172332">
+<text x="56" y="67" font-size="28" fill="#637284">会议行动表 · 示例</text>
+<path d="M56 94H864" stroke="#d9e2ea"/>
+<text x="56" y="170" font-size="38" font-weight="600">事项、负责人、时间，都放在一起。</text>
+<text x="56" y="240" font-size="32">核对方案　｜　项目负责人　｜　周五</text>
+<text x="56" y="294" font-size="32">提交材料　｜　内容负责人　｜　周四</text>
+<text x="56" y="368" font-size="34" font-weight="600">记录里没有的信息，标成待确认。</text>
+<text x="56" y="436" font-size="26" fill="#637284">示例数据，仅用于验证画面与标注。</text>
+</g></svg>

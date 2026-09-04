@@ -6,11 +6,13 @@ import json
 import re
 import subprocess
 import sys
+import os
+import shutil
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-TEXT_SUFFIXES = {".md", ".py", ".js", ".html", ".json", ".yaml", ".yml", ".txt", ".toml", ".css"}
+TEXT_SUFFIXES = {".md", ".py", ".js", ".mjs", ".jsx", ".svg", ".html", ".json", ".yaml", ".yml", ".txt", ".toml", ".css"}
 REQUIRED = (
     "SKILL.md",
     "agents/openai.yaml",
@@ -22,6 +24,9 @@ REQUIRED = (
     "scripts/project_state.py",
     "scripts/test_single_agent_architecture.py",
     "scripts/validate_delivery.py",
+    "references/remotion-production.md",
+    "assets/remotion-template/package.json",
+    "scripts/prepare_remotion.py",
 )
 SECRET_PATTERNS = (
     re.compile(r"gh[opusr]_[A-Za-z0-9_]{20,}"),
@@ -110,6 +115,16 @@ def main() -> int:
         print("ERROR: single-main-agent architecture regression checks failed")
         return 1
     print(regression.stdout.rstrip())
+    if subprocess.run([sys.executable,str(ROOT / 'scripts/test_remotion_adapter.py')],cwd=ROOT).returncode:
+        return 1
+    node = os.environ.get("NODE_BINARY") or shutil.which("node")
+    if not node:
+        print("ERROR: Node.js required for Remotion behavior tests; set NODE_BINARY or PATH")
+        return 1
+    tests = sorted((ROOT / "assets/remotion-template/test").glob("*.test.mjs"))
+    result = subprocess.run([node, "--test", *map(str, tests)], cwd=ROOT)
+    if result.returncode:
+        return 1
     print("OK: repository checks passed")
     return 0
 

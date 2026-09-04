@@ -35,6 +35,7 @@ def main() -> None:
     parser.add_argument("--mode", choices=("information", "concept", "demo"), default="information")
     parser.add_argument("--platforms", default="小红书,抖音")
     parser.add_argument("--duration", type=float, default=60.0)
+    parser.add_argument("--renderer", choices=("remotion", "canvas-legacy"), default="remotion")
     args = parser.parse_args()
 
     root = args.project_dir.resolve()
@@ -54,7 +55,10 @@ def main() -> None:
     render_template(TEMPLATES / "brief.md", root / "brief.md", replacements)
     render_template(TEMPLATES / "timeline.json", root / "work" / "timeline.json", replacements)
     render_template(TEMPLATES / "publish-package.md", root / "outputs" / (title + "_发布包.md"), replacements)
-    shutil.copytree(MG_TEMPLATE, root / "work" / "visual" / "mg-template", dirs_exist_ok=True)
+    source = ASSETS / "remotion-template" if args.renderer == "remotion" else MG_TEMPLATE
+    folder = "remotion" if args.renderer == "remotion" else "mg-template"
+    shutil.copytree(source, root / "work" / "visual" / folder,
+                    ignore=shutil.ignore_patterns("node_modules", ".cache", "__pycache__"))
 
     manifest = {
         "title": title,
@@ -68,6 +72,7 @@ def main() -> None:
             "sourceEvidence": [],
         },
         "status": "initialized",
+        "renderer": args.renderer,
     }
     (root / "project.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     save_state(root / "project-state.json", new_state(title=title, mode=args.mode))

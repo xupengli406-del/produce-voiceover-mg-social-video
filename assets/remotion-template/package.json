@@ -1,0 +1,20 @@
+{
+  "name": "semantic-mg-renderer",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "studio": "remotion studio src/index.jsx --no-open",
+    "verify": "node scripts/render.mjs"
+  },
+  "dependencies": {
+    "@remotion/bundler": "4.0.520",
+    "@remotion/cli": "4.0.520",
+    "@remotion/layout-utils": "4.0.520",
+    "@remotion/renderer": "4.0.520",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "remotion": "4.0.520"
+  },
+  "devDependencies": {"pngjs": "7.0.0"}
+}

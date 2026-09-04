@@ -6,7 +6,7 @@
 
 - 信息解释、概念说明和流程演示三种叙事模式；
 - 用户原声或已授权音色 API；
-- 确定性时间驱动的 MG 画面；
+- Remotion 帧驱动的 MG 画面、真实测字、目标自适应标注和避障箭头；
 - 前三秒视觉钩子、产品首次识别与逐语义窗视觉导演；
 - 官方素材、事实证据、解释型 MG 与生成情境的来源分层；
 - 口播—画面双向覆盖审计；
@@ -30,6 +30,8 @@
 ```bash
 python scripts/init_project.py <project-dir> --title "主题" --mode information
 ```
+
+新建工程默认使用 Remotion；已有 Canvas 工程保留兼容，不自动迁移。安装锁定依赖、添加场景动作数据、实际渲染和负例测试，见 [Remotion 制作层](references/remotion-production.md)。新增组件测试不替代原有口播、事实、音频、导演、封面及完整听审标准。
 
 已有项目建立状态账本：
 
