@@ -10,7 +10,7 @@
 - 前三秒视觉钩子、产品首次识别与逐语义窗视觉导演；
 - 官方素材、事实证据、解释型 MG 与生成情境的来源分层；
 - 口播—画面双向覆盖审计；
-- 字幕、音效、三种封面和双平台发布包；
+- 字幕、音效、三种可选封面风格、三比例封面和双平台发布包；
 - 技术、内容、视觉、音频与事实边界验收。
 
 ## 运行架构
@@ -21,12 +21,13 @@
 
 纯录屏剪辑不属于这个 Skill 的主要范围，应使用录屏视频专项流程。
 
-## 从视频来到这里，先拿齐三套
+## 配套 Skill，按需求安装
 
 | Skill | 负责什么 |
 | --- | --- |
 | **本仓库：主 MG Skill** | 整理需求、口播、声音、字幕、语义动作、检查及发布包 |
-| [封面 Skill](https://github.com/xupengli406-del/produce-social-media-cover) | 同片视觉或美漫高冲击两种方向，按画幅独立构图 |
+| [同片／美漫封面 Skill](https://github.com/xupengli406-del/produce-social-media-cover) | 同片视觉或美漫高冲击两种方向，按画幅独立构图 |
+| [大标题真人封面 Skill](https://github.com/xupengli406-del/produce-big-title-cover) | 大标题突出、真人自然、道具文字清晰的第三种方向 |
 | [节奏增强 Skill](https://github.com/xupengli406-del/enhance-voiceover-video-rhythm) | 哪个词值得强调、选什么动作、何时停稳以及动效密度 |
 
 这是一套给 AI 智能体使用的制作要求、模板和脚本。AI 按内容编写、调用和调整工程；不是双击就能工作的独立剪辑软件，也不保证每次一次生成即可发布。
@@ -35,13 +36,15 @@
 
 ## 安装与第一次使用
 
-分别下载或克隆这三个仓库，保留各自完整文件夹，不要只复制 `SKILL.md`。把它们放入所用 AI 工具配置的 Skills 目录；本仓库文件夹名保持为 `produce-voiceover-mg-social-video`。入口文件是 [SKILL.md](SKILL.md)。[官方 Skills 说明](https://learn.chatgpt.com/docs/build-skills)介绍 Skill 的组织与使用方式；其他工具按各自安装说明配置。
+安装主 MG Skill 和本次要用的封面 Skill；需要节奏增强时再安装对应 Skill。可以安装上表全部四个仓库以备选择，也可以只装所需项。保留各自完整文件夹，不要只复制 `SKILL.md`。把它们放入所用 AI 工具配置的 Skills 目录；本仓库文件夹名保持为 `produce-voiceover-mg-social-video`。入口文件是 [SKILL.md](SKILL.md)。[官方 Skills 说明](https://learn.chatgpt.com/docs/build-skills)介绍 Skill 的组织与使用方式；其他工具按各自安装说明配置。
 
-在 Codex 中，也可以让内置 `$skill-installer` 从上表的 GitHub 仓库安装完整 Skill。安装后检查三套名称是否可见；没有出现时重新启动工具。具体目录以当前工具配置为准。
+在 Codex 中，也可以让内置 `$skill-installer` 从上表的 GitHub 仓库安装完整 Skill。安装后检查实际安装的名称是否可见；没有出现时重新启动工具。具体目录以当前工具配置为准。
 
 第一次可以直接对 AI 说：
 
-> 使用 produce-voiceover-mg-social-video、produce-social-media-cover 和 enhance-voiceover-video-rhythm。我要给【观众】讲【主题】，希望他们记住【核心观点】。资料在【资料位置】，使用【我提供的声音／已授权音色】。封面选【同片视觉／美漫高冲击】。先让我审完整口播，再做一段包含声画同步和重点标注的 45–60 秒样片，确认后扩展全片，保留字幕、封面、发布文案和可编辑工程。
+> 使用 produce-voiceover-mg-social-video。我要给【观众】讲【主题】，希望他们记住【核心观点】。资料在【资料位置】，使用【我提供的声音／已授权音色】。封面选【同片视觉／美漫高冲击／大标题真人】，调用对应的封面 Skill。先让我审完整口播，再做一段包含声画同步和重点标注的 45–60 秒样片，确认后扩展全片，保留字幕、封面、发布文案和可编辑工程。
+
+封面选“大标题真人”时，AI 读取独立的 `produce-big-title-cover`；原来的同片视觉和美漫高冲击保持可选。选择规则与交接字段见 [封面入口](references/cover-art-direction.md)。
 
 请使用自己的主题、资料、声音与人物照片；仓库不包含原作者的人像、声音或个人音色配置。固定口头禅可以换成自己的，也可以省略。
 
@@ -70,7 +73,7 @@
 | 素材进入、字段组合、节点连线和结果 | [场景示例](assets/remotion-template/src/scenes.jsx)；按本期语义继续扩展，不机械套页 |
 | 圈选随文字大小改变、箭头避让 | [几何实现](assets/remotion-template/src/contracts.mjs)、[组件](assets/remotion-template/src/components.jsx)；先提供真实目标边界，再检查实际帧 |
 | 配音改了，旧时码不能接着用 | `scripts/project_state.py` 使下游失效；重新对齐后再准备、渲染和验收，不是替换音频就自动修好 |
-| 两种封面风格、三比例重构 | 由上面的封面 Skill 实现；每个比例独立验收 |
+| 三种可选封面风格、三比例重构 | 同片视觉/美漫用 produce-social-media-cover；大标题真人用 produce-big-title-cover。风格与比例分别选择，每个比例独立验收 |
 | 重点强调与稳定停留 | 用户调用节奏增强 Skill 时，由同一制作流程接入处理图 |
 | 字幕、稿子、发布材料和工程 | [交付规范](references/delivery-and-qa.md)、`scripts/validate_delivery.py` |
 

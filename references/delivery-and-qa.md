@@ -32,7 +32,7 @@
 
 ## 封面专项验收回收
 
-按 [cover-art-direction.md](cover-art-direction.md) 交接给当前 `$produce-social-media-cover`。人物、服装、动作、手部力学、层级、遮挡、方向与三比例构图等专项规则只维护在该 Skill；MG 不保存另一份副本。
+按 [cover-art-direction.md](cover-art-direction.md) 交接给所选风格对应的当前封面 Skill：同片视觉/美漫高冲击使用 `$produce-social-media-cover`，大标题真人使用 `$produce-big-title-cover`。人物、服装、动作、手部力学、层级、遮挡、方向与三比例构图等专项规则只维护在该 Skill；MG 不保存另一份副本。
 
 回收每个实际所需比例的成品、专项看图结论、源文件、方向依据和用户确认范围。技术尺寸通过不能代替专项验收；单张方向预览不能作为完整封面集交付。包级检查只负责：封面与视频承诺一致、平台规格与所需文件齐全、专项结论对应当前文件、没有制作状态或遗漏的待修项。未通过则不能批准 `cover`/`delivery`。
 
