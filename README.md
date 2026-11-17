@@ -4,6 +4,12 @@
 
 按输入、声音和画面选择路径：先读[视频制作怎么选](references/video-workflow-selection.md)。本流程优先本人录音或已授权合成，画面默认Remotion。新手可依次认识文字动画、自己的声音与照片数字人；制作时按本期素材和目标画面选择。
 
+## 看效果
+
+主案例[AI做PPT](https://github.com/xupengli406-del/claude-skills/releases/download/video-skill-cases-2026-11-17/02-mg-ai-ppt.mp4)：用本人授权音色合成旁白，配Remotion图形与实际PPT页面，讲清六类成品的选型、转换和修改；319.722667秒，1080×1920，30fps。它没有真人或照片数字人主持，声音也不是本人现场录音。输入、成片和开始方式见[案例说明](examples/ai-ppt/README.md)。
+
+另可看[AI自动做口播视频](https://github.com/xupengli406-del/claude-skills/releases/download/video-skill-cases-2026-11-17/02-mg-auto-voiceover.mp4)这条233.984秒的既有MG演示，历史版本条件见[副案例说明](examples/auto-voiceover/README.md)。
+
 ## 能力范围
 
 - 信息解释、概念说明和流程演示三种叙事模式；
@@ -48,7 +54,7 @@
 
 封面选“大标题真人”时，AI 读取独立的 `produce-big-title-cover`；原来的同片视觉和美漫高冲击保持可选。选择规则与交接字段见 [封面入口](references/cover-art-direction.md)。
 
-请使用自己的主题、资料、声音与人物照片；仓库不包含原作者的人像、声音或个人音色配置。固定口头禅可以换成自己的，也可以省略。
+请使用自己的主题、资料、声音与人物照片；仓库不分发原作者的原始人像、录音或个人音色配置。已授权的完成视频和AI辅助封面仅用于案例展示。固定口头禅可以换成自己的，也可以省略。
 
 ### 运行需要什么
 
