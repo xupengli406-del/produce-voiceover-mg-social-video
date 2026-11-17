@@ -2,6 +2,8 @@
 
 一个面向 Codex 的可复用 Skill：把信息、概念、观点或产品流程制作成带用户授权原声、信息型 MG 动效、同步字幕、双平台封面和发布文案的小红书/抖音完整交付包。
 
+按输入、声音和画面选择路径：先读[三种视频工作流](references/video-workflow-selection.md)。本流程优先本人录音或已授权合成，画面默认Remotion；它与数字人、video-presenter不是升级链。
+
 ## 能力范围
 
 - 信息解释、概念说明和流程演示三种叙事模式；
@@ -28,7 +30,7 @@
 | **本仓库：主 MG Skill** | 整理需求、口播、声音、字幕、语义动作、检查及发布包 |
 | [同片／美漫封面 Skill](https://github.com/xupengli406-del/produce-social-media-cover) | 同片视觉或美漫高冲击两种方向，按画幅独立构图 |
 | [大标题真人封面 Skill](https://github.com/xupengli406-del/produce-big-title-cover) | 大标题突出、真人自然、道具文字清晰的第三种方向 |
-| [节奏增强 Skill](https://github.com/xupengli406-del/enhance-voiceover-video-rhythm) | 哪个词值得强调、选什么动作、何时停稳以及动效密度 |
+| [内置画面节奏检查](references/visual-rhythm.md) | 哪个词值得强调、选什么动作、何时停稳以及动效密度 |
 
 这是一套给 AI 智能体使用的制作要求、模板和脚本。AI 按内容编写、调用和调整工程；不是双击就能工作的独立剪辑软件，也不保证每次一次生成即可发布。
 
@@ -36,7 +38,7 @@
 
 ## 安装与第一次使用
 
-安装主 MG Skill 和本次要用的封面 Skill；需要节奏增强时再安装对应 Skill。可以安装上表全部四个仓库以备选择，也可以只装所需项。保留各自完整文件夹，不要只复制 `SKILL.md`。把它们放入所用 AI 工具配置的 Skills 目录；本仓库文件夹名保持为 `produce-voiceover-mg-social-video`。入口文件是 [SKILL.md](SKILL.md)。[官方 Skills 说明](https://learn.chatgpt.com/docs/build-skills)介绍 Skill 的组织与使用方式；其他工具按各自安装说明配置。
+安装主 MG Skill 和本次要用的封面 Skill；画面节奏检查已内置，无需另装；封面只安装本次所需项。保留各自完整文件夹，不要只复制 `SKILL.md`。把它们放入所用 AI 工具配置的 Skills 目录；本仓库文件夹名保持为 `produce-voiceover-mg-social-video`。入口文件是 [SKILL.md](SKILL.md)。[官方 Skills 说明](https://learn.chatgpt.com/docs/build-skills)介绍 Skill 的组织与使用方式；其他工具按各自安装说明配置。
 
 在 Codex 中，也可以让内置 `$skill-installer` 从上表的 GitHub 仓库安装完整 Skill。安装后检查实际安装的名称是否可见；没有出现时重新启动工具。具体目录以当前工具配置为准。
 
@@ -74,7 +76,7 @@
 | 圈选随文字大小改变、箭头避让 | [几何实现](assets/remotion-template/src/contracts.mjs)、[组件](assets/remotion-template/src/components.jsx)；先提供真实目标边界，再检查实际帧 |
 | 配音改了，旧时码不能接着用 | `scripts/project_state.py` 使下游失效；重新对齐后再准备、渲染和验收，不是替换音频就自动修好 |
 | 三种可选封面风格、三比例重构 | 同片视觉/美漫用 produce-social-media-cover；大标题真人用 produce-big-title-cover。风格与比例分别选择，每个比例独立验收 |
-| 重点强调与稳定停留 | 用户调用节奏增强 Skill 时，由同一制作流程接入处理图 |
+| 重点强调与稳定停留 | 由本包画面节奏检查生成处理图并接入同一制作时间轴 |
 | 字幕、稿子、发布材料和工程 | [交付规范](references/delivery-and-qa.md)、`scripts/validate_delivery.py` |
 
 ## 工程与检查命令
